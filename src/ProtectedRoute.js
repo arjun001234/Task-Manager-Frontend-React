@@ -1,31 +1,32 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { Route,Redirect } from 'react-router-dom';
+import React from "react";
+import { useSelector } from "react-redux";
+import { Route, Redirect } from "react-router-dom";
 
-const ProtectedRoute = ({ component: Component,state , ...rest }) => {
+const ProtectedRoute = ({ component: Component, state, ...rest }) => {
+
+  const isAuthenticated = useSelector(state => state.user.isLoggedIn);
 
   return (
-    <Route {...rest} render={
-        props => {
-          if (state.isAuthenticated) {
-            return <Component {...rest} {...props}   />
-          } else {
-            return <Redirect to={
-              {
-                pathname: '/unauthorized',
+    <Route
+      {...rest}
+      render={(props) => {
+        if (isAuthenticated) {
+          return <Component {...rest} {...props} />;
+        } else {
+          return (
+            <Redirect
+              to={{
+                pathname: "/unauthorized",
                 state: {
-                  from: props.location
-                }
-              }
-            } />
-          }
+                  from: props.location,
+                },
+              }}
+            />
+          );
         }
-      } />
-  )
-}
+      }}
+    />
+  );
+};
 
-const mapsStateToProps = (state) => {
-  return {state}
-} 
-
-export default connect(mapsStateToProps)(ProtectedRoute);
+export default ProtectedRoute;

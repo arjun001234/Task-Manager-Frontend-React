@@ -1,54 +1,51 @@
-
 //import {createUserRequest,userLoginRequest,readUserRequest} from './requests';
-import './style.css';
-import {BrowserRouter as Router,Route,Switch} from 'react-router-dom';
-import Login from './Login';
-import LandingPage from './LandingPage';
-import Register from './Register';
-import HomePage from './HomePage';
-import React from 'react'
-import ProtectedRoute from './ProtectedRoute';
-import Unauthorized from './Unauthorized';
-import Profile from './profile';
-import CompletedTasks from './CompletedTasks';
-import AddTask from './AddTask';
-import Dashboard from './HomePage';
-
-import {createStore} from 'redux';
-import { reducer } from './Redux/reducer';
-import {Provider} from 'react-redux';
-
-const initialStore = {
-  isAuthenticated: false,
-  isLoading: true,
-  user: null,
-  token: localStorage.getItem('token'),
-  errors: null
-}
-
-const store = createStore(reducer,initialStore);
+import "./css/style.css";
+import "./css/animations.css"
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
+import HomePage from "./pages/HomePage";
+import React from "react";
+import ProtectedRoute from "./ProtectedRoute";
+import Unauthorized from "./components/ui/Unauthorized";
+import TextAnim from "./components/ui/text-anim";
+import Auth from "./components/auth/auth";
+import { createPortal } from "react-dom";
+import Modals from "./components/modals/modals";
+import NotificationBar from "./components/ui/notificationBar";
+import ProfilePage from "./pages/profile";
 
 function App() {
 
+  const container1 = document.getElementById('modals');
+  const container2 = document.getElementById('notification');
+
   return (
-    <Provider store={store} >
-    <Router>
-      <Switch>
-        <Route exact path='/' children={<LandingPage />} />
-        <Route exact path='/login'  render={props => <Login {...props}    />}  />
-        <Route exact path='/register'  render={props => <Register {...props}  />} />
-        <ProtectedRoute   exact path='/home' component={HomePage}  />
-        <Route exact path='/unauthorized' component={Unauthorized} />
-        <ProtectedRoute   exact path='/home/profile' component={Profile}  />
-        <ProtectedRoute   exact path='/home/completedTasks' component={CompletedTasks}  />
-        <ProtectedRoute   exact path='/home/addTasks' component={AddTask}  />
-      </Switch>
-    </Router>
-    </Provider>
+    <>
+    {createPortal(<Modals />,container1)}
+    {createPortal(<NotificationBar />,container2)}
+      <Router>
+          <Switch>
+            <Route path="/" exact >
+              <LandingPage />
+            </Route>
+            <Route
+              exact
+              path="/login"
+              render={(props) => <Auth {...props} />}
+            />
+            <Route
+              exact
+              path="/register"
+              render={(props) => <Auth {...props} />}
+            />
+            <Route exact path="/unauthorized" component={Unauthorized} />
+            <ProtectedRoute exact path="/home" component={HomePage} />
+            <ProtectedRoute exact path="/profile" component={ProfilePage} />
+            <ProtectedRoute exact path="/text-anim" component={TextAnim} />
+          </Switch>
+      </Router>
+    </>
   );
 }
 
 export default App;
-/**
- * 
- */
